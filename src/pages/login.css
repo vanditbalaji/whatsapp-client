@@ -1,0 +1,33 @@
+.avatar {
+  height: 15rem;
+  width: 15rem;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px !important;
+  width: 8px;
+  border-radius: 1rem;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #ffffff3b;
+  border-radius: 1rem;
+}
+
+.empty-border{
+  border-left: 1px solid #303D45;
+}
+
+@media (max-width: 450px) {
+  .whatsapp-gif {
+    height: 150px;
+    width: 150px;
+  }
+  .avatar {
+    height: 8rem;
+    width: 8rem;
+    margin-top: 2.3rem;
+  }
+  .avatarImage {
+    flex-direction: column;
+  }
+}
