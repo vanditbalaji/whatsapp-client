@@ -9,7 +9,6 @@ import { FaCamera, FaMicrophone } from "react-icons/fa";
 const ChatListItem = ({ data, isContactListPage = false }) => {
   const [{ userInfo, currentUser }, dispatch] = useStateProvider();
 
-  console.log("current data", data);
 
   const handleChat = () => {
     if (!isContactListPage) {

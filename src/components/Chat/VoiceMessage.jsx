@@ -58,9 +58,9 @@ const VoiceMessage = ({ message }) => {
 
   useEffect(() => {
     const audioUrl = `http://localhost:8080/${message.message}`;
-    console.log(audioUrl)
+
     const audio = new Audio(audioUrl);
-    console.log("voice message audio",audio)
+
     setAudioMessage(audio);
     waveform.current.load(audioUrl);
     waveform.current.on("ready", () => {

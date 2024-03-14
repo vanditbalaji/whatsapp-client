@@ -10,15 +10,29 @@ import { useStateProvider } from "@/context/StateContext";
 import Chat from "./Chat/Chat";
 import { io } from "socket.io-client";
 import SearchMessages from "./Chat/SearchMessages";
+import VideoCall from "./Call/VideoCall";
+import VoiceCall from "./Call/VoiceCall";
+import IncomingVideoCall from "./common/IncomingVideoCall";
+import IncomingCall from "./common/IncomingCall";
 
 function Main() {
   const { push: redirect } = useRouter();
-  const [{ userInfo, currentUser, message, messageSearch }, dispatch] =
-    useStateProvider();
+  const [
+    {
+      userInfo,
+      currentUser,
+      message,
+      messageSearch,
+      videoCall,
+      voiceCall,
+      incomingVoiceCall,
+      incomingVideoCall,
+    },
+    dispatch,
+  ] = useStateProvider();
   const [socketEvent, setSocketEvent] = useState(false);
   const socket = useRef();
 
-  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       firebaseAuth,
@@ -46,7 +60,6 @@ function Main() {
 
     return () => unsubscribe();
   }, []);
-  
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -73,19 +86,6 @@ function Main() {
     }
   }, [userInfo]);
 
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     socket.current = io(HOST);
-
-  //     socket.current.on("connect_error", (err) => {
-  //       console.error("Socket.IO connection error:", err.message);
-  //     });
-
-  //     socket.current.emit("add-user", userInfo.id);
-  //     dispatch({ type: "SET_SOCKET", socket });
-  //   }
-  // }, [userInfo]);
-
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-receive", (data) => {
@@ -96,22 +96,63 @@ function Main() {
           },
         });
       });
+
+      socket.current.on("incoming-voice-call", ({ from, roomId, callType }) => {
+        dispatch({
+          type: "SET_INCOMING_VOICE_CALL",
+          incomingVoiceCall: { ...from, roomId, callType },
+        });
+      });
+
+      socket.current.on("incoming-video-call", ({ from, roomId, callType }) => {
+        dispatch({
+          type: "SET_INCOMING_VIDEO_CALL",
+          incomingVideoCall: { ...from, roomId, callType },
+        });
+      });
+
+      socket.current.on("voice-call-rejected", () => {
+        dispatch({ type: "END_CALL" });
+      });
+
+      socket.current.on("video-call-rejected", () => {
+
+        dispatch({ type: "END_CALL" });
+      });
+
       setSocketEvent(true);
     }
-  }, [socket.current]);
+  }, [socket.current,socketEvent]);
 
   return (
     <>
-      <div className="grid w-screen h-screen max-h-screen grid-cols-main max-w-screen over">
-        <ChatList />
-        {currentUser ? (
-          <div className={messageSearch ? "grid grid-cols-2" : "grid-cols-2"}>
-            <Chat /> {messageSearch && <SearchMessages />}
-          </div>
-        ) : (
-          <Empty />
-        )}
-      </div>
+   
+      {incomingVideoCall && <IncomingVideoCall />}
+      {incomingVoiceCall && <IncomingCall />}
+
+      {videoCall && (
+        <div className="w-screen h-screen max-h-full overflow-hidden">
+          <VideoCall />
+        </div>
+      )}
+
+      {voiceCall && (
+        <div className="w-screen h-screen max-h-full overflow-hidden">
+          <VoiceCall />
+        </div>
+      )}
+      {!videoCall && !voiceCall && (
+        <div className="grid w-screen h-screen max-h-screen grid-cols-main max-w-screen over">
+          <ChatList />
+          {currentUser ? (
+            <div className={messageSearch ? "grid grid-cols-2" : "grid-cols-2"}>
+              <Chat /> {messageSearch && <SearchMessages />}
+            </div>
+          ) : (
+            <Empty />
+          )}
+        </div>
+      )}
     </>
   );
 }

@@ -18,7 +18,7 @@ const List = () => {
 
           dispatch({ type: "SET_ONLINE_USERS", onlineUsers });
           dispatch({ type: "SET_USERS_CONTACTS", userContacts: user });
-          console.log(user);
+      
         } catch (err) {
           console.log(err);
         }
@@ -49,7 +49,7 @@ const List = () => {
        filteredLatestMessage[contact.id] = contact;
      }
    });
-  console.log(filteredLatestMessage)
+
 
 
   return (
@@ -57,7 +57,7 @@ const List = () => {
       {filteredContacts?.length > 0
         ? Object.values(filteredLatestMessage)?.map((contact) => (
             <>
-              {console.log("a")}
+       
               <ChatListItem data={contact} key={contact.id} />
             </>
           ))

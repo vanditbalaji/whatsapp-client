@@ -31,7 +31,7 @@ const login = () => {
         // if (!data || !data.data || !data.status) redirect("/login");
         if (data.data) {
           const { name, about, photoUrl, email, id } = data.data;
-          console.log("data", name, about, photoUrl, email);
+
           dispatch({
             type: "USER_INFO",
             userInfo: { name, email, about, photoUrl, id },
@@ -58,7 +58,7 @@ const login = () => {
     try {
       if (email) {
         const user = await axios.post(CHECK_USER, { email });
-        console.log(user);
+
         if (!user.data.status) {
           dispatch({
             type: "USER_INFO",

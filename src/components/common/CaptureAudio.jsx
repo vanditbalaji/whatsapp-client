@@ -100,7 +100,7 @@ const CaptureAudio = ({ hide }) => {
           const blob = new Blob(chunk, { type: "audio/ogg; codecs=opus" });
           const audioUrl = URL.createObjectURL(blob);
           const audio = new Audio(audioUrl);
-          console.log("this is audio",audio)
+    
           setRecordedAudio(audio);
           waveForm.load(audioUrl);
         };
